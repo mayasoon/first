@@ -9,10 +9,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationHandler;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +17,7 @@ import java.util.concurrent.Executors;
 public class Main {
 
     public static void main(String[] args) {
+
         SizeOf.skipStaticField(true);
         SizeOf.setMinSizeToLog(10);
         int p = 1000000000;
@@ -36,7 +34,8 @@ public class Main {
         modify(p1,p2);
         System.out.println(p1.x+ "   "+p1.y);
         System.out.println(p2.x+"   "+p2.y);
-
+        LinkedList l = new LinkedList();
+        ThreadLocal t = new ThreadLocal();
         String abc = "abc";
         abc.replace('b','d');//因为字符串被final关键字修饰，所以替换后会生成一个新的字符串在方法区，如果没有赋值给属性就是垃圾对象，下一次gc会被回收。
         System.out.println(abc);

@@ -20,6 +20,8 @@ class FirstKotlin {
 fun main() {
     val firstKotlin = FirstKotlin();
     firstKotlin.test();
+    val equipment = "fish net" to "catching fish"
+    println("${equipment.first} used for ${equipment.second}")
 
     val ni:String? = null;
     if (ni!=null) {
@@ -37,7 +39,8 @@ fun main() {
     println(js)
     /**
      * 高阶函数
-     * 一个函数可以将另一个函数当作参数。将其他函数用作参数的函数称为“高阶函数”。此模式对组件之间的通信（其方式与在 Java 中使用回调接口相同）很有用。
+     * 一个函数可以将另一个函数当作参数。将其他函数用作参数的函数称为“高阶函数”。
+     * 此模式对组件之间的通信（其方式与在 Java 中使用回调接口相同）很有用。
      *
      */
     fun stringMapper(str: String, mapper: (String) -> Int): Int {

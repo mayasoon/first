@@ -10,7 +10,9 @@ fun main() {
     val numbers = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     val (evenNumbers, oddNumbers) = numbers.partition { it % 2 == 0 }
 
-    println("Even numbers: $evenNumbers")
-    println("Odd numbers: $oddNumbers")
-
+//    println("Even numbers: $evenNumbers")
+//    println("Odd numbers: $oddNumbers")
+    // Will assign kotlin.Unit
+    val isUnit = println("This is an expression")
+    println(isUnit)
 }

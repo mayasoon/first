@@ -11,7 +11,11 @@ val waterFilter = { dirty : Int -> dirty / 2}
 
 fun main(){
     println(waterFilter(dirtyLevel))
-    val waterFilter: (Int) -> Int = { dirty -> dirty / 3 } //输入Int参数返回Int值的常量
+
+    //(Int) -> Int 为匿名函数类型，参数为int类型，返回值为int类型
+    // 输入Int参数返回Int值的常量 = 等号等同于return
+    val waterFilter: (Int) -> Int = { dirty -> dirty / 3 }
+
 
     println(updateDirty(dirtyLevel, waterFilter))
     println(updateDirty(15, ::increaseDirty))
@@ -22,6 +26,10 @@ fun main(){
      */
     dirtyLevel = updateDirty(dirtyLevel) { dirtyLevel -> dirtyLevel + 23}
     println(dirtyLevel)
+
+    highOrder {
+        println("1111")
+    }
 }
 fun updateDirty(dirty: Int, operation: (Int) -> Int): Int {
     return operation(dirty)
@@ -31,3 +39,14 @@ fun update(dirty: Int, operation: (Int) -> String): String {
 }
 
 fun increaseDirty( start: Int ) = start + 1
+//一个函数可以将另一个函数当作参数。将其他函数用作参数的函数称为“高阶函数”。
+// 此模式对组件之间的通信（其方式与在 Java 中使用回调接口相同）很有用。
+fun stringMapper(str: String, mapper: (String) -> Int): Int {
+    // Invoke function
+    return mapper(str)
+}
+fun highOrder(name: String? = null,block: () -> Unit) :Unit{
+    println(name)
+    block.invoke()
+    println("HighOderFunction")
+}
