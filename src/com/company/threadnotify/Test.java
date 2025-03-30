@@ -17,5 +17,7 @@ public class Test {
 
         System.out.println(s.incrementAndGet());
         System.out.println(s.incrementAndGet());
+        LinkedBlockingQueue queue = new LinkedBlockingQueue();
+        queue.peek();
     }
 }
