@@ -1,6 +1,5 @@
 package com.company;
 
-import apple.laf.JRSUIConstants;
 import net.sourceforge.sizeof.SizeOf;
 
 import javax.xml.crypto.Data;
