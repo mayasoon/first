@@ -1,6 +1,5 @@
 package com.company.kotlin
 
-import sun.security.util.Length
 
 /**
  * @author meng
