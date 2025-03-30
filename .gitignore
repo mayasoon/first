@@ -1,2 +1,14 @@
 # Project exclude paths
-/out/
+# 忽略 IDE 相关文件
+.idea/
+.vscode/
+*.iml
+# 忽略构建输出文件夹
+build/
+out/
+target/
+# 忽略临时文件
+*.tmp
+*.swp
+# 忽略日志文件
+logs/*.log
