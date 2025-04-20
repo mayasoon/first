@@ -1,5 +1,6 @@
 package com.company.kotlin
 
+import sun.security.provider.Sun
 import java.util.*
 
 /**
@@ -72,7 +73,16 @@ fun main() {
 //    Point(100)
 //    Point(200L)
 
-    mainUser()
+//    mainUser()
+//    mainEnum()
+//    mainSuper()
+//    lambdaMain()
+//    main8()
+//    main9()
+
+//    main10()
+
+    main14()
 }
 
 fun mainString() {
@@ -421,7 +431,7 @@ fun parserType(value: Any) {
 class Point(val x: Int, val y: Int) {
     private val localX = x + 1
     private val localY = y + 1
-    var isEquals: Boolean= false
+    var isEquals: Boolean = false
         get() {
             return x == y
         }
@@ -468,12 +478,14 @@ class User() {
             field = value + "111+222"
         }
 }
+
 fun mainUser() {
     val user = User()
     user.age = 1
     user.grade = "h"
     println(user.grade)
 }
+
 class Example {
     //主要用于不能在构造函数中初始化的属性，依赖注入，
     //findviewbyid无法在类构造方法中初始化属性
@@ -481,7 +493,380 @@ class Example {
 
 //    var point2: Point
 
-    constructor(){
-        point = Point(10,2)
+    constructor() {
+        point = Point(10, 2)
     }
+}
+
+/**
+ * 为了确保生成的代码的一致性以及有意义的行为，数据类必须满足以下要求：
+ * 主构造函数需要包含一个参数
+ * 主构造函数的所有参数需要标记为 val 或 var
+ * 数据类不能是抽象、开放、密封或者内部的
+ */
+data class Point2(val x: Int, val y: Int)
+
+/**
+ * Sealed 类（密封类）用于对类可能创建的子类进行限制
+ * 用 Sealed 修饰的类的直接子类只允许被定义在 Sealed
+ * 类所在的文件中（密封类的间接继承者可以定义在其他文件中）
+ */
+sealed class View2 {
+
+    open fun click() {
+
+    }
+
+}
+
+class Button4 : View2() {
+
+}
+
+class TextView : View2() {
+}
+
+/**
+ * 枚举可以声明一些参数
+ * 枚举也可以实现接口
+ */
+enum class Day(val index: Int) : OnChangedListener {
+//    SUNDAY(0), MONDAY(1), TUESDAY(2), WEDNESDAY(3), THURSDAY(4), FRIDAY(5),
+
+    SATURDAY(6) {
+        override fun onChange() {
+            println("onChange")
+        }
+    }
+}
+
+fun mainEnum() {
+    println(Day.SATURDAY.onChange())
+}
+
+interface OnChangedListener {
+    fun onChange()
+}
+
+//-------------------------------------------------
+class Outer {
+
+    private val bar = 1
+
+    //在 kotlin 中在类里面再定义的类默认是：嵌套类，此时嵌套类不会包含对外部类的隐式引用
+    //反编译查看java发现它是静态的
+    class Nested {
+        fun foo1() = 2
+        //错误,
+        //fun foo2() = bar
+    }
+
+    //内部类。内部类会隐式持有对外部类的引用
+    inner class Nested2 {
+        fun foo() = 2
+        fun foo2() = bar
+    }
+}
+
+fun mainOuter() {
+    val demo = Outer.Nested().foo1()
+    val d = Outer().Nested2().foo2()
+}
+
+//-------------------------------------------------
+interface OnClickListener {
+
+    fun onClick()
+
+}
+
+class View4 {
+
+    fun setClickListener(clickListener: OnClickListener) {
+
+    }
+
+}
+
+fun main4() {
+    val view = View4()
+    //可以使用对象表达式来创建匿名内部类实例
+    view.setClickListener(object : OnClickListener {
+        override fun onClick() {
+
+        }
+    })
+}
+
+//-------------------------------------------------
+interface Clickable {
+    //接口中可以包含抽象属性声明接口不定义该抽象属性是应该存储到一个支持字段还是通过 getter 来获取，
+    // 接口本身并不包含任何状态，因此只有实现这个接口的类在需要的情况下会存储这个值
+    val statusValue: Int
+}
+
+//SAM  只有一个抽象方法的接口称为函数式接口或 SAM（单一抽象方法）接口，
+//在 Kotlin 1.4 之后，就支持直接以 Lambda 的方式来声明 SelfRunnable 的实现类，从而使得在方法调用上可以更加简洁
+// 但这也要求 interface 同时使用 fun 关键字修饰
+fun interface SelfRunnable {
+    fun run()
+}
+
+fun setRunnable(selfRunnable: SelfRunnable) {
+    selfRunnable.run()
+}
+
+fun runnAble() {
+    setRunnable {
+        println("可以直接用大括号来执行单一接口方法")
+    }
+}
+
+//-------------------------------------------------
+open class Base() {
+    open fun fun1() {
+
+    }
+
+    fun fun2() {
+
+    }
+}
+
+class SubClass() : Base() {
+    override fun fun1() {
+        super.fun1()
+    }
+}
+
+open class BaseClass {
+    open fun fun1() {
+        println("BaseClass fun1")
+    }
+}
+
+class SubClass2 : BaseClass() {
+
+    override fun fun1() {
+        println("SubClass fun1")
+    }
+
+    inner class InnerClass {
+        //但如果想要在一个内部类中访问外部类的超类，则需要通过由外部类名限定的 super 关键字来实现
+        fun fun2() {
+            super@SubClass2.fun1()
+        }
+
+    }
+
+}
+
+fun mainSuper() {
+    val subClass2 = SubClass2()
+    val innerClass = subClass2.InnerClass()
+    //BaseClass fun1
+    innerClass.fun2()
+}
+
+//-------------------------------------------------
+open class BaseClass2 {
+    open fun fun1() {
+        println("BaseClass fun1")
+    }
+}
+
+interface BaseInterface {
+    //接口成员默认就是 open 的
+    fun fun1() {
+        println("BaseInterface fun1")
+    }
+}
+
+//为了表示采用从哪个超类型继承的实现，使用由尖括号中超类型名限定的 super 来指定，如 super< BaseClass >
+class SubClass3() : BaseClass2(), BaseInterface {
+    override fun fun1() {
+        //调用 SubClass 的 fun1() 函数
+        super<BaseClass2>.fun1()
+        //调用 BaseInterface 的 fun1() 函数
+        super<BaseInterface>.fun1()
+    }
+}
+
+//--------------------------------------------------
+class Namer {
+    //伴生对象
+    companion object {
+
+        val defaultName = "mike"
+
+    }
+
+}
+
+//扩展函数
+fun Namer.Companion.getName(): String {
+    return defaultName
+}
+
+fun main7() {
+    Namer.getName()
+}
+
+var String.customLen: Int
+    get() = 10
+    set(value) = println(value)
+
+fun lambdaMain() {
+    { va1: Int, va2: Int -> println(va1 + va2) }(10, 20)
+}
+
+data class Person(val name: String, val age: Int)
+
+fun main8() {
+    val people = listOf(Person("leavesC", 24), Person("Ye", 22))
+//    println(people.maxBy { it.age }) //Person(name=leavesC, age=24)
+}
+
+fun test() {
+    println("test1111")
+}
+
+fun main9() {
+    val t = ::test
+    t.invoke()
+    //也可以用构造方法引用存储或者延期执行创建类实例的动作
+    val createPerson = ::Person
+    val person = createPerson("leavesC", 24)
+    println(person)
+}
+
+fun mainRun() {
+    var nickName = "leaves"
+    nickName = nickName.run {
+        ifEmpty {
+            ""
+        }
+    }
+    println(nickName)
+}
+
+fun mainMap() {
+    ///中缀调用,使用 “to” 来声明 map 的 key 与 value 之间的对应关系，这种形式的函数调用被称为中缀调用
+    val maps = mapOf(1 to "leavesC", 2 to "ye", 3 to "https://juejin.cn/user/923245496518439")
+    maps.forEach { key, value -> println("key is : $key , value is : $value") }
+    val map2 = mapOf("1" to "11", "22" to "333")
+
+}
+
+class Example2 {
+
+    val lazyValue1: String by lazy {
+        println("lazyValue1 computed!")
+        "Hello"
+    }
+
+    val lazyValue2: String by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        println("lazyValue2 computed!")
+        computeLazyValue()
+    }
+
+    private fun computeLazyValue() = "leavesC"
+
+}
+
+fun main10() {
+    val example = Example2()
+    println("---------------------------------------------------")
+    println(example.lazyValue1 + "--------------") //lazyValue1 computed!     Hello
+    println(example.lazyValue1 + "--------------=-----------") //Hello
+    println(example.lazyValue2 + "---------------=-") //lazyValue2 computed! leavesC
+}
+
+//可以在一个 map 映射里存储属性的值，然后把属性的存取操作委托给 map 进行管理
+fun main11() {
+    val student = Student(
+        mapOf(
+            "name" to "leavesCZY",
+            "age" to 24
+        )
+    )
+    println(student.name)
+    println(student.age)
+}
+
+class Student(val map: Map<String, Any?>) {
+    val name: String by map
+    val age: Int by map
+}
+
+fun main12() {
+
+    //普通函数类型 () -> Unit: 就像一个独立的指令 print("Hello")。
+    //带接收者的函数类型 String.() -> Unit: 就像一个可以在 String 对象上执行的指令 println(this.length)，
+    //但写在 lambda 里就是 { println(length) }。
+    //当你调用 "abc".myFunc() 时，这个 lambda 就会在 "abc" 这个 String 对象上执行，里面的 length 就会访问 "abc" 的 length。
+    fun <T> T.apply(block: T.() -> Unit): T {
+        // `this` 是 T 类型的接收者对象（调用 apply 的那个对象）
+        block() // 调用传入的 lambda (block)，并将当前的 `this` (T对象) 作为接收者
+        return this // 返回接收者对象，实现链式调用
+    }
+    //run到返回值是lambda函数的返回值，apply是T本身可以实现链式调用
+    "av".run {
+        println(toUpperCase())
+    }
+    "Ac".run({
+        println(toLowerCase())
+    })
+}
+
+class Person3 {
+    var name: String = ""
+    var age: Int = 0
+    fun speak() {
+        println("My name is $name")
+    }
+}
+
+fun main13() {
+    val person = Person3().apply {
+        // 在这个 lambda 内部，`this` 是 Person 对象
+        name = "Alice" // 等同于 this.name = "Alice"
+        age = 30     // 等同于 this.age = 30
+        speak()      // 等同于 this.speak()
+    }
+    println(person.name) // 输出: Alice
+    //with 通常用于对一个对象执行一系列操作而不必重复写对象名
+    val numbers = mutableListOf("one", "two", "three")
+    with(numbers) {
+        println("'with' is called with argument $this") // this 就是 numbers
+        println("It contains $size elements") // size 是 numbers 的属性
+    }
+}
+
+data class Html(val elements: MutableList<String> = mutableListOf()) {
+    init {
+        println("Html init()")
+    }
+
+    fun element(name: String) {
+        elements.add(name)
+    }
+}
+
+// 定义一个函数，接收一个 Html.() -> Unit 类型的 lambda
+fun html(block: Html.() -> Unit): Html {
+    val html = Html() // 创建接收者对象
+
+    html.block() // 在 html 对象上执行 lambda
+    return html
+}
+
+fun main14() {
+    val page = html { // html 函数接收一个 Html.() -> Unit 类型的 lambda
+        // 在这个 lambda 内部，this 是 Html 对象
+        element("head") // 直接调用 Html 的成员方法
+        element("body") // 直接调用 Html 的成员方法
+        println("main14")
+    }
+//    println(page.elements) // 输出: [head, body]
 }
